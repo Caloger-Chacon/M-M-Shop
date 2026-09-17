@@ -19,6 +19,7 @@ export interface Product {
   slug: { current: string }
   category: string
   price: number
+  featured: boolean
   onSale?: boolean
   salePrice?: number
   saleEndDate?: string
