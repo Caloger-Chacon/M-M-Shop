@@ -109,7 +109,7 @@ export default async function HomePage() {
           linkAll="/catalogo"
         />
       ) : null}
-  
+
       {/* Si no hay productos en absoluto */}
       {allProducts.length === 0 && (
         <section className="py-24 md:py-32 bg-gradient-to-b from-bone to-white">
@@ -146,7 +146,7 @@ export default async function HomePage() {
             
             <p className="text-charcoal-light font-light text-lg md:text-xl mb-8 max-w-xl mx-auto leading-relaxed">
               Estamos preparando algo especial para ti. 
-              <span className="text-terracotta font-medium"> Nuestra colección exclusiva</span> 
+              <span className="text-terracotta font-medium"> Nuestra colección exclusiva </span> 
               estará disponible muy pronto.
             </p>
 
