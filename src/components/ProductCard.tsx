@@ -5,7 +5,7 @@ import type { Product } from '@/sanity/lib/types'
 
 interface Props {
   product: Product
-  compact?: boolean  // ← Agrega esta prop
+  compact?: boolean
 }
 
 export default function ProductCard({ product, compact = false }: Props) {
