@@ -51,6 +51,7 @@ export default function ProductCard({ product, compact = false }: Props) {
           <h3 className={`font-semibold text-charcoal line-clamp-1 ${compact ? 'text-xs md:text-sm' : 'text-sm md:text-base'}`}>
             {product.name}
           </h3>
+          
           <div className="flex items-center gap-2 mt-1">
             {hasDiscount && (
               <span className="text-[10px] md:text-xs text-charcoal-light/50 line-through">
@@ -62,17 +63,17 @@ export default function ProductCard({ product, compact = false }: Props) {
             </span>
           </div>
           
-          {/* Dots de colores */}
+          {/* Dots de colores CORREGIDOS */}
           {product.variants && product.variants.length > 0 && (
-            <div className="flex gap-1 mt-2">
-              {product.variants.map((variant, i) => ( (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {product.variants.slice(0, 8).map((variant, i) => (
                 <span
                   key={i}
-                  className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full border border-white shadow-sm"
-                  style={{ backgroundColor: variant.colorHex || '#ccc' }}
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border border-white shadow-sm ring-1 ring-black/5"
+                  style={{ backgroundColor: variant.colorHex || '#cccccc' }}
                   title={variant.color}
                 />
-              )))}
+              ))}
             </div>
           )}
         </div>
