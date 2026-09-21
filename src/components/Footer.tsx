@@ -97,7 +97,7 @@ export default function Footer({ whatsappNumber, address, hours }: FooterProps) 
           <p className="text-xs text-white/40">
             © {new Date().getFullYear()} M&M Shop. Todos los derechos reservados.
           </p>
-          <p className="text-[10px] text-white/10 mt-2">
+          <p className="text-[10px] text-white/40  mt-2">
             Hecho con ❤️ en Venezuela
           </p>
         </div>
