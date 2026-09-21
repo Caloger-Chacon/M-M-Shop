@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
 import { formatEUR } from '@/sanity/lib/format'
+import { getColorHex } from '@/sanity/lib/colors'
 import type { Product } from '@/sanity/lib/types'
+
 
 interface Props {
   product: Product
@@ -64,19 +66,18 @@ export default function ProductCard({ product, compact = false }: Props) {
           </div>
           
           {/* Dots de colores CORREGIDOS */}
-          {product.variants && product.variants.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {product.variants.slice(0, 8).map((variant, i) => (
+            {product.variants.slice(0, 8).map((variant, i) => {
+              const hexColor = getColorHex(variant.color || '', variant.colorHex)
+              return (
                 <span
                   key={i}
                   className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border border-white shadow-sm ring-1 ring-black/5"
-                  style={{ backgroundColor: variant.colorHex || '#cccccc' }}
+                  style={{ backgroundColor: hexColor }}
                   title={variant.color}
                 />
-              ))}
-            </div>
-          )}
-        </div>
+              )
+            })}
+          </div>
       </div>
     </Link>
   )

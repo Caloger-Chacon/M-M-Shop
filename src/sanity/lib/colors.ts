@@ -18,5 +18,21 @@ export const COLOR_MAP: Record<string, string> = {
 }
 
 export function getColorHex(color: string, fallback?: string) {
-  return fallback || COLOR_MAP[color] || '#cccccc'
+  // Si hay un fallback válido (hex de 7 caracteres), úsalo
+  if (fallback && /^#[0-9A-Fa-f]{6}$/.test(fallback)) {
+    return fallback
+  }
+
+  // Búsqueda exacta primero
+  if (COLOR_MAP[color]) {
+    return COLOR_MAP[color]
+  }
+
+  // Búsqueda sin importar mayúsculas/minúsculas
+  const colorLower = color.toLowerCase()
+  const encontrado = Object.keys(COLOR_MAP).find(
+    (clave) => clave.toLowerCase() === colorLower
+  )
+  
+  return encontrado ? COLOR_MAP[encontrado] : '#cccccc'
 }
