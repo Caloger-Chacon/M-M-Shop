@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import ProductCard from './ProductCard'
 import type { Product } from '@/sanity/lib/types'
@@ -15,10 +15,13 @@ interface Props {
 export default function CategorySlider({ title, subtitle, products, linkAll }: Props) {
   const [index, setIndex] = useState(0)
   const [visible, setVisible] = useState(4)
+  const touchStart = useRef<number | null>(null)
+  const touchEnd = useRef<number | null>(null)
+  const sliderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const update = () => {
-      if (window.innerWidth < 640) setVisible(2)  // ← Cambiado de 1 a 2
+      if (window.innerWidth < 640) setVisible(2)
       else if (window.innerWidth < 1024) setVisible(2)
       else if (window.innerWidth < 1280) setVisible(3)
       else setVisible(4)
@@ -39,6 +42,39 @@ export default function CategorySlider({ title, subtitle, products, linkAll }: P
     }, 5000)
     return () => clearInterval(timer)
   }, [products.length, visible])
+
+  // Touch events para swipe
+  const minSwipeDistance = 50
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEnd.current = null
+    touchStart.current = e.targetTouches[0].clientX
+  }
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEnd.current = e.targetTouches[0].clientX
+  }
+
+  const onTouchEnd = () => {
+    if (!touchStart.current || !touchEnd.current) return
+    
+    const distance = touchStart.current - touchEnd.current
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
+
+    if (isLeftSwipe) {
+      setIndex((prev) => {
+        const max = products.length - visible
+        return prev >= max ? 0 : prev + 1
+      })
+    }
+
+    if (isRightSwipe) {
+      setIndex((prev) => {
+        return prev <= 0 ? products.length - visible : prev - 1
+      })
+    }
+  }
 
   if (products.length === 0) return null
 
@@ -75,7 +111,13 @@ export default function CategorySlider({ title, subtitle, products, linkAll }: P
 
         <div className="relative group">
           {/* Slider */}
-          <div className="overflow-hidden">
+          <div 
+            ref={sliderRef}
+            className="overflow-hidden touch-pan-x"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
             <div
               className="flex transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(${translate}%)` }}
@@ -98,7 +140,7 @@ export default function CategorySlider({ title, subtitle, products, linkAll }: P
               <button
                 onClick={prev}
                 disabled={safeIndex === 0}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-cream shadow-md flex items-center justify-center text-charcoal hover:bg-terracotta hover:text-white hover:border-terracotta transition disabled:opacity-30 disabled:cursor-not-allowed"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-cream shadow-md flex items-center justify-center text-charcoal hover:bg-terracotta hover:text-white hover:border-terracotta transition disabled:opacity-30 disabled:cursor-not-allowed z-10"
                 aria-label="Anterior"
               >
                 ←
@@ -106,7 +148,7 @@ export default function CategorySlider({ title, subtitle, products, linkAll }: P
               <button
                 onClick={next}
                 disabled={safeIndex >= maxIndex}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-cream shadow-md flex items-center justify-center text-charcoal hover:bg-terracotta hover:text-white hover:border-terracotta transition disabled:opacity-30 disabled:cursor-not-allowed"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white border border-cream shadow-md flex items-center justify-center text-charcoal hover:bg-terracotta hover:text-white hover:border-terracotta transition disabled:opacity-30 disabled:cursor-not-allowed z-10"
                 aria-label="Siguiente"
               >
                 →
