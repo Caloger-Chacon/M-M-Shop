@@ -1,85 +1,80 @@
 import Link from 'next/link'
 import { urlFor } from '@/sanity/lib/image'
-import { formatEUR, calculateDiscountPercent } from '@/sanity/lib/format'
-import { getColorHex } from '@/sanity/lib/colors'
+import { formatEUR } from '@/sanity/lib/format'
 import type { Product } from '@/sanity/lib/types'
 
-export default function ProductCard({ product }: { product: Product }) {
-  const colors = (product.variants ?? []).slice(0, 5)
+interface Props {
+  product: Product
+  compact?: boolean  // ← Agrega esta prop
+}
+
+export default function ProductCard({ product, compact = false }: Props) {
+  const imageUrl = product.mainImage ? urlFor(product.mainImage).width(600).url() : null
   
-  // ✅ Verificar si tiene descuento válido
-  const hasDiscount =
-    product.onSale &&
-    product.salePrice &&
-    product.salePrice > 0 &&
-    product.salePrice < (product.price ?? 0)
-  
+  const finalPrice = product.onSale && product.salePrice ? product.salePrice : product.price
+  const hasDiscount = product.onSale && product.salePrice && product.salePrice < product.price
   const discountPercent = hasDiscount
-    ? calculateDiscountPercent(product.price ?? 0, product.salePrice ?? 0)
+    ? Math.round(((product.price - product.salePrice!) / product.price) * 100)
     : 0
 
   return (
-    <Link
-      href={`/producto/${product.slug?.current ?? product._id}`}
-      className="group block bg-white rounded-2xl border border-cream overflow-hidden hover:shadow-lg hover:-translate-y-1 transition"
-    >
-      <div className="relative aspect-[4/5] bg-cream/40 overflow-hidden">
-        {/* ✅ Badge de descuento */}
-        {hasDiscount && (
-          <div className="absolute top-3 left-3 bg-terracotta text-white text-xs font-bold px-3 py-1 rounded-full z-10">
-            -{discountPercent}%
-          </div>
-        )}
-        
-        {product.mainImage ? (
-          <img
-            src={urlFor(product.mainImage).width(600).height(750).url()}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-xs text-charcoal-light/40">
-            Sin imagen
-          </div>
-        )}
-      </div>
-
-      <div className="p-4">
-        <div className="text-[11px] uppercase tracking-widest text-terracotta mb-1">
-          {product.category ?? 'Cartera'}
+    <Link href={`/producto/${product.slug.current}`} className="block group">
+      <div className={`bg-white rounded-2xl border border-cream overflow-hidden transition hover:shadow-md ${compact ? '' : 'h-full'}`}>
+        {/* Imagen */}
+        <div className={`relative bg-cream/30 overflow-hidden ${compact ? 'aspect-square' : 'aspect-[3/4]'}`}>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={product.name}
+              className={`w-full h-full object-cover transition group-hover:scale-105 ${compact ? 'duration-300' : 'duration-500'}`}
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-xs text-charcoal-light/40">
+              Sin imagen
+            </div>
+          )}
+          
+          {/* Badge de descuento */}
+          {hasDiscount && (
+            <div className="absolute top-2 left-2 bg-terracotta text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">
+              -{discountPercent}%
+            </div>
+          )}
         </div>
-        <h3 className="font-serif font-semibold text-charcoal leading-snug mb-2">
-          {product.name}
-        </h3>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            {hasDiscount ? (
-              <>
-                {/* ✅ Precio tachado */}
-                <span className="text-xs text-charcoal-light/50 line-through">
-                  {formatEUR(product.price ?? 0)}
-                </span>
-                {/* ✅ Precio de oferta */}
-                <span className="font-bold text-terracotta">
-                  {formatEUR(product.salePrice ?? 0)}
-                </span>
-              </>
-            ) : (
-              <span className="font-bold text-charcoal">
-                {formatEUR(product.price ?? 0)}
+
+        {/* Info */}
+        <div className={`p-2 md:p-3 ${compact ? 'md:p-4' : ''}`}>
+          <p className="text-[10px] md:text-xs uppercase tracking-wider text-terracotta font-medium mb-1">
+            {product.category}
+          </p>
+          <h3 className={`font-semibold text-charcoal line-clamp-1 ${compact ? 'text-xs md:text-sm' : 'text-sm md:text-base'}`}>
+            {product.name}
+          </h3>
+          <div className="flex items-center gap-2 mt-1">
+            {hasDiscount && (
+              <span className="text-[10px] md:text-xs text-charcoal-light/50 line-through">
+                {formatEUR(product.price)}
               </span>
             )}
+            <span className={`font-bold text-terracotta ${compact ? 'text-xs md:text-sm' : 'text-sm md:text-base'}`}>
+              {formatEUR(finalPrice)}
+            </span>
           </div>
-          <div className="flex gap-1">
-            {colors.map((v) => (
-              <span
-                key={v.color}
-                title={v.color}
-                className="w-3.5 h-3.5 rounded-full border border-white shadow"
-                style={{ backgroundColor: getColorHex(v.color, v.colorHex) }}
-              />
-            ))}
-          </div>
+          
+          {/* Dots de colores */}
+          {product.variants && product.variants.length > 0 && (
+            <div className="flex gap-1 mt-2">
+              {product.variants.slice(0, 4).map((variant, i) => (
+                <span
+                  key={i}
+                  className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full border border-white shadow-sm"
+                  style={{ backgroundColor: variant.colorHex || '#ccc' }}
+                  title={variant.color}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Link>
