@@ -296,7 +296,6 @@ export default function CartView({
                 <option>Pago Móvil</option>
                 <option>Binance</option>
                 <option>Efectivo</option>
-                <option>Transferencia</option>
               </select>
             </div>
           </div>
