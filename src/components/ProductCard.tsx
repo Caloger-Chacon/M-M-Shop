@@ -65,14 +65,14 @@ export default function ProductCard({ product, compact = false }: Props) {
           {/* Dots de colores */}
           {product.variants && product.variants.length > 0 && (
             <div className="flex gap-1 mt-2">
-              {product.variants.slice(0, 4).map((variant, i) => (
+              {product.variants.map((variant, i) => ( (
                 <span
                   key={i}
                   className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full border border-white shadow-sm"
                   style={{ backgroundColor: variant.colorHex || '#ccc' }}
                   title={variant.color}
                 />
-              ))}
+              )))}
             </div>
           )}
         </div>
