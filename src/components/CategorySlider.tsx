@@ -15,9 +15,13 @@ interface Props {
 export default function CategorySlider({ title, subtitle, products, linkAll }: Props) {
   const [index, setIndex] = useState(0)
   const [visible, setVisible] = useState(4)
-  const touchStart = useRef<number | null>(null)
-  const touchEnd = useRef<number | null>(null)
-  const sliderRef = useRef<HTMLDivElement>(null)
+  
+  // Refs para el swipe
+  const touchStartX = useRef<number>(0)
+  const touchStartY = useRef<number>(0)
+  const touchEndX = useRef<number>(0)
+  const touchEndY = useRef<number>(0)
+  const isSwiping = useRef<boolean>(false)
 
   useEffect(() => {
     const update = () => {
@@ -43,36 +47,49 @@ export default function CategorySlider({ title, subtitle, products, linkAll }: P
     return () => clearInterval(timer)
   }, [products.length, visible])
 
-  // Touch events para swipe
+  // Lógica de swipe
   const minSwipeDistance = 50
+  const maxVerticalDistance = 30 // Si se mueve mucho verticalmente, no es swipe
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchEnd.current = null
-    touchStart.current = e.targetTouches[0].clientX
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX
+    touchStartY.current = e.targetTouches[0].clientY
+    touchEndX.current = e.targetTouches[0].clientX
+    touchEndY.current = e.targetTouches[0].clientY
+    isSwiping.current = false
   }
 
-  const onTouchMove = (e: React.TouchEvent) => {
-    touchEnd.current = e.targetTouches[0].clientX
-  }
-
-  const onTouchEnd = () => {
-    if (!touchStart.current || !touchEnd.current) return
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX
+    touchEndY.current = e.targetTouches[0].clientY
     
-    const distance = touchStart.current - touchEnd.current
-    const isLeftSwipe = distance > minSwipeDistance
-    const isRightSwipe = distance < -minSwipeDistance
-
-    if (isLeftSwipe) {
-      setIndex((prev) => {
-        const max = products.length - visible
-        return prev >= max ? 0 : prev + 1
-      })
+    const diffX = Math.abs(touchEndX.current - touchStartX.current)
+    const diffY = Math.abs(touchEndY.current - touchStartY.current)
+    
+    // Si el movimiento horizontal es mayor que el vertical, es un swipe
+    if (diffX > diffY && diffX > 10) {
+      isSwiping.current = true
     }
+  }
 
-    if (isRightSwipe) {
-      setIndex((prev) => {
-        return prev <= 0 ? products.length - visible : prev - 1
-      })
+  const handleTouchEnd = () => {
+    const diffX = touchStartX.current - touchEndX.current
+    const diffY = Math.abs(touchStartY.current - touchEndY.current)
+    
+    // Solo actuar si fue un swipe horizontal claro
+    if (Math.abs(diffX) > minSwipeDistance && diffY < maxVerticalDistance) {
+      if (diffX > 0) {
+        // Swipe izquierda (siguiente)
+        setIndex((prev) => {
+          const max = products.length - visible
+          return prev >= max ? 0 : prev + 1
+        })
+      } else {
+        // Swipe derecha (anterior)
+        setIndex((prev) => {
+          return prev <= 0 ? products.length - visible : prev - 1
+        })
+      }
     }
   }
 
@@ -111,22 +128,22 @@ export default function CategorySlider({ title, subtitle, products, linkAll }: P
 
         <div className="relative group">
           {/* Slider */}
-          <div 
-            ref={sliderRef}
-            className="overflow-hidden touch-pan-x"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-          >
+          <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-700 ease-in-out"
               style={{ transform: `translateX(${translate}%)` }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
               {products.map((product) => (
                 <div
                   key={product._id}
                   className="shrink-0 px-1 md:px-2"
                   style={{ width: `${100 / visible}%` }}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 >
                   <ProductCard product={product} compact />
                 </div>
