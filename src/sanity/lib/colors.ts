@@ -9,6 +9,7 @@ export const COLOR_MAP: Record<string, string> = {
   Dorado: '#D4AF37',
   Plateado: '#C0C0C0',
   'Azul marino': '#1F3A5F',
+  'Azul claro': '#ADD8E6',
   Café: '#6F4E37',
   Blanco: '#FFFFFF',
   Gris: '#808080',
