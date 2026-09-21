@@ -71,7 +71,7 @@ export default function CartView({
       `• Subtotal: ${formatEUR(subtotal)}`,
       '• Envío: Se confirma según la zona',
       '',
-      '*DATOS DE LA CLIENTA:*',
+      '*DATOS DEL CLIENTE:*',
       `• Nombre: ${name.trim()}`,
       `• Zona de entrega: ${zone.trim()}`,
       `• Método de pago: ${payment}`,
