@@ -22,7 +22,9 @@ export default function CatalogView({ products }: { products: Product[] }) {
     let list =
       category === 'Todas'
         ? [...products]
-        : products.filter((p) => p.category === category)
+        : products.filter(
+            (p) => p.category?.toLowerCase() === category.toLowerCase()
+          )
 
     if (sort === 'precio-asc') list.sort((a, b) => (a.price ?? 0) - (b.price ?? 0))
     if (sort === 'precio-desc') list.sort((a, b) => (b.price ?? 0) - (a.price ?? 0))
