@@ -4,6 +4,9 @@ import type { Product } from '@/sanity/lib/types'
 import ProductCard from '@/components/ProductCard'
 import Link from 'next/link'
 
+// 👇 ESTA LÍNEA OBLIGA A ACTUALIZAR LA PÁGINA EN CADA VISITA
+export const revalidate = 0
+
 export default async function DestacadasPage() {
   const products = await client.fetch(featuredProductsQuery) as Product[]
 
