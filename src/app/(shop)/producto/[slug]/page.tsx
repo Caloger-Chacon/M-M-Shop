@@ -63,7 +63,7 @@ export default async function ProductPage({
                 </div>
               </div>
             ) : (
-              <div className="text-3xl font-bold text-charcoal">
+              <div className="text-3xl font-bold text-terracotta">
                 {formatEUR(product.price ?? 0)}
               </div>
             )}
