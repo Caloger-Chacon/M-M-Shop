@@ -73,7 +73,7 @@ export default function Footer({ whatsappNumber, address, hours }: FooterProps) 
             <div className="text-sm text-white/70 space-y-3">
               <div className="flex items-start gap-2">
                 <span className="text-lg mt-0.5">📦</span>
-                <span>Coordinamos con Zoom, MRW, Tealca o tu empresa de confianza.</span>
+                <span>Coordinamos con Zoom, MRW o tu empresa de confianza.</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-lg">📱</span>
