@@ -30,7 +30,7 @@ export default function WhatsAppButton() {
   if (!whatsappNumber) return null
 
   // 👇 MENSAJE LIMPIO Y SEGURO (Sin emojis que fallen)
-  const message = "Hola, quiero más información sobre sus productos."
+  const message = "Hola, quiero más información sobre sus productos 🛍️."
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
   return (
