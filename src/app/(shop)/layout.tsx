@@ -3,6 +3,7 @@ import { siteSettingsQuery } from '@/sanity/lib/queries'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { CartProvider } from '../../lib/cart-context'
+import WhatsAppButton from '@/components/WhatsAppButton'  
 
 async function getSettings() {
   try {
@@ -21,13 +22,16 @@ export default async function ShopLayout({
 
   return (
     <CartProvider>
-      <Header />
-      <main className="min-h-screen bg-bone">{children}</main>
-      <Footer
-        whatsappNumber={settings?.whatsappNumber}
-        address={settings?.address}
-        hours={settings?.hours}
-      />
+      <div className="min-h-screen flex flex-col bg-cream/20">
+        <Header />
+        <main className="min-h-screen bg-bone">{children}</main>
+        <Footer
+          whatsappNumber={settings?.whatsappNumber}
+          address={settings?.address}
+          hours={settings?.hours}
+        />
+      <WhatsAppButton />
+      </div>
     </CartProvider>
   )
 }
