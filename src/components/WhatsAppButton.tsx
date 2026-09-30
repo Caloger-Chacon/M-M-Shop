@@ -1,37 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { client } from '@/sanity/lib/client'
-import { siteSettingsQuery } from '@/sanity/lib/queries'
 
-export default function WhatsAppButton() {
+interface WhatsAppButtonProps {
+  whatsappNumber?: string
+}
+
+export default function WhatsAppButton({ whatsappNumber }: WhatsAppButtonProps) {
   const pathname = usePathname()
-  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null)
 
   // Ocultar en la página del carrito
   if (pathname === '/carrito') return null
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const settings = await client.fetch(siteSettingsQuery)
-        if (settings?.whatsappNumber) {
-          const cleanNumber = settings.whatsappNumber.replace(/\D/g, '')
-          setWhatsappNumber(cleanNumber)
-        }
-      } catch (error) {
-        console.error('Error al obtener número de WhatsApp:', error)
-      }
-    }
-    fetchSettings()
-  }, [])
-
   if (!whatsappNumber) return null
 
-  // 👇 MENSAJE LIMPIO Y SEGURO (Sin emojis que fallen)
-  const message = "Hola, quiero más información sobre sus productos 🛍️."
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+  // Limpiar el número: quitar espacios, +, guiones
+  const cleanNumber = whatsappNumber.replace(/\D/g, '')
+  const message = "Hola, quiero más información sobre sus productos."
+  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`
 
   return (
     <a
