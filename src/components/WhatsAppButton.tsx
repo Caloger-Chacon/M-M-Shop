@@ -15,7 +15,7 @@ export default function WhatsAppButton({ whatsappNumber }: WhatsAppButtonProps) 
 
   // Limpiar el número: quitar espacios, +, guiones
   const cleanNumber = whatsappNumber.replace(/\D/g, '')
-  const message = "Hola, quiero más información sobre sus productos."
+  const message = "Hola, quiero más información sobre sus productos 🛍️."
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`
 
   return (
